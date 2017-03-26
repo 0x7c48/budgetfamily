@@ -1,0 +1,116 @@
+{% import 'admin/layout.html' as layout with context -%}
+{% import 'macros.html' as macros %}
+{% extends 'admin/base.html' %}
+
+{% macro menu_item(item) %}
+  {% if item.is_accessible() and item.is_visible() %}
+    {% set class_name = item.get_class_name() or "" %}
+    {% if item.is_active(admin_view) %}
+      {% set class_name = class_name + " active" %}
+    {% endif %}
+    <li role="presentation" class="{{ class_name }}" style="padding-left: 10px">
+      <a href="{{ item.get_url() }}">{{ layout.menu_icon(item) }}{{ item.name }}</a>
+    </li>
+  {% endif %}
+{% endmacro %}
+
+
+{% macro menu_accordion_item(item) %}
+  {% if item.is_accessible() and item.is_visible() %}
+    {% set class_name = item.get_class_name() or "" %}
+    {% if item.is_active(admin_view) %}
+      {% set class_name = class_name + " active" %}
+    {% endif %}
+    <div role="presentation" class="panel-body {{ class_name }}" style="padding-left: 10px">
+      <a href="{{ item.get_url() }}">{{ layout.menu_icon(item) }}{{ item.name }}</a>
+    </div>
+  {% endif %}
+{% endmacro %}
+
+
+{% macro menu() %}
+{% for item in admin_view.admin.menu() %}
+  {% if item.is_accessible() %}
+  {% if item.is_category() %}
+
+    <li class="">
+      <a href="#">{{ layout.menu_icon(item) }}{{ item.name }} <span class="caret"></span></a>
+    </li>
+
+    {% for child in item.get_children() %}
+      {{ menu_item(child) }}
+    {% endfor %}
+  {% else %}
+    {{ menu_item(item) }}  
+  {% endif %}
+  {% endif %}
+{% endfor %}
+{% endmacro %}
+
+
+{% macro accordion_menu() %}
+  {% for item in admin_view.admin.menu() %}
+    {% if item.is_accessible() %}
+    {% if item.is_category() %}
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading-{{ item.name }}">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ item.name }}" aria-expanded="true" aria-controls="collapse-{{ item.name }}">
+              {{ layout.menu_icon(item) }}{{ item.name }}
+            </a>
+            <span class="caret"></span>
+          </h4>
+        </div>
+        <div id="collapse-{{ item.name }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-{{ item.name }}">
+          {% for child in item.get_children() %}
+            {{ menu_accordion_item(child) }}
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      {{ menu_accordion_item(item) }}
+    {% endif %}
+    {% endif %}  
+  {% endfor %}
+{% endmacro %}
+
+
+{% block head_tail %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='layout.css') }}" rel="stylesheet">
+{% endblock %}
+
+
+{% block page_body %}
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-2">
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        {{ accordion_menu() }}
+      </div>
+
+      <ul class="nav nav-pills nav-stacked">
+  	    {{ menu() }}
+  	    {{ layout.menu_links() }}
+          <hr/>
+          {% block access_control %}{% endblock %}
+      </ul>
+
+    </nav>
+    <div class="col-md-10">
+      <div id="content" class="row">
+    	{% block brand %}
+    	<h2 id="brand">{{ admin_view.name }}</h2>
+    	{% endblock %}
+
+        {{ layout.messages() }}
+
+        {% set render_ctx = h.resolve_ctx() %}
+
+	    {% block body %}{% endblock %}
+      </div>
+     </div>
+  </div>
+</div>
+{% endblock %}

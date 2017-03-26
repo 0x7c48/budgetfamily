@@ -1,0 +1,14 @@
+{% extends admin_base_template %}
+
+{% block access_control %}
+    <li>
+    {% if current_user.is_authenticated() %}
+      <a href="{{ url_for('security.logout') }}">
+        {{ current_user.email.split('@')[0] }} <br>
+        Выйти
+      </a>
+    {% else %}
+        <a href="{{ url_for('security.login') }}">Войти</a>
+    {% endif %}
+    </li>
+{% endblock %}

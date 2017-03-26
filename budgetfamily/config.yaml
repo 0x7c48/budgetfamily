@@ -1,0 +1,29 @@
+PROD: &prod
+  DEBUG: false
+  DEVELOPMENT: false
+  DEBUG_TOOLBAR: false
+  SECURITY_PASSWORD_HASH: pbkdf2_sha256
+  SECURITY_PASSWORD_SCHEMES: ['pbkdf2_sha256']
+  SECURITY_PASSWORD_SALT: 'plaintext'
+  SECRET_KEY: "secret-key"
+  CSRF_ENABLED: true
+  SITE: 'budgetfamily.net'
+  SITE_URL: 'http://budgetfamily.net'
+  SQLALCHEMY_DATABASE_URI: ""
+  SECURITY_POST_LOGIN_VIEW: '/control'
+  SECURITY_REGISTERABLE: true
+  SECURITY_SEND_REGISTER_EMAIL: false
+  SECURITY_CHANGEABLE: true
+  SECURITY_CHANGE_URL: '/admin/user/password/change'
+  SECURITY_SEND_PASSWORD_CHANGE_EMAIL: false
+  UPLOAD_PATH: '/home/uploads/'
+  MEDIA_URL: 'http://budgetfamily.net/media/uploads/'
+  ACCESS_DENIED: 'ACCESS DENIED'
+
+DEVELOPMENT:
+  <<: *prod
+  DEVELOPMENT: true
+  DEBUG: true
+  UPLOAD_PATH: 'uploads/'
+  MEDIA_URL: '/'
+  SQLALCHEMY_DATABASE_URI: "postgresql://budgetfamily_user:budgetfamily_passwd@localhost:5432/budgetfamily_db"

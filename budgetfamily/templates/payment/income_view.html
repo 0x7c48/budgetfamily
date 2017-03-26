@@ -1,0 +1,14 @@
+{% extends 'admin/master.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block body %}
+    <h3>Список email адресов для начисления бонусов</h3>
+
+    <form action="" method="POST" class="admin-form form-horizontal" role="form" name="1">
+      {{ lib.render_form_fields(form) }}
+      {{ lib.render_form_buttons() }}
+      {% if form.error_email_list %}<p>Error in emails</p>{% endif %}
+    </form>
+
+{% endblock body %}
